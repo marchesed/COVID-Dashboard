@@ -28,17 +28,13 @@ class CountryChart extends React.Component {
     }
 
     componentDidMount() {
-        console.log('render country',this.props.country)
         this.getData(this.props.country)
     }
 
     componentDidUpdate(prevProps){
         if (prevProps.country !== this.props.country) {
-            console.log('props are different')
             this.getData(this.props.country)
         }
-        console.log('props updated',this.props)
-        //this.getData(this.props.country)
     }
 
     render(){
