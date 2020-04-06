@@ -1,8 +1,5 @@
 import React from 'react'
-import { Chart } from 'react-charts'
 import CanvasJSReact from '../assets/canvasjs.react';
-//var CanvasJSReact = require('./canvasjs.react');
-var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -16,16 +13,23 @@ const DataPoint = (props) =>{
          }]
      }
     const data = props.points
-    data.map(point =>{
+    data.map(point => {
         point.Date = formatDate(point.Date)
         options.data[0].dataPoints.push({label: point.Date, y: point.Cases})
+        return null
     })
-    return (
-        <div>
-            <CanvasJSChart options = {options} />
-        </div>
-        
-    )
+    if(options.data[0].dataPoints.length < 1){
+        return(
+            <div>No data available for this country sorry :(</div>
+        )
+    }
+    else{
+        return (
+            <div>
+                <CanvasJSChart options = {options} />
+            </div>
+        )
+    }
 }
 
 function formatDate(date){

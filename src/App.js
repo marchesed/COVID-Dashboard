@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import CountryChart from './components/CountryChart';
 import axios from 'axios'
@@ -11,7 +10,7 @@ class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      optionsState: "canada",
+      optionsState: "yemen",
       countries: []
     }
     this.changeCountry = this.changeCountry.bind(this);
@@ -26,7 +25,11 @@ class App extends React.Component {
   getCountryList() {
     axios.get(countriesURL)
     .then(resp => {
-      this.setState({countries: resp.data})
+      this.setState({countries: resp.data.sort(function(a, b){
+        if(a.Country < b.Country) { return -1; }
+        if(a.Country > b.Country) { return 1; }
+        return 0;
+    })})
     })
   }
 
@@ -38,14 +41,15 @@ class App extends React.Component {
 
     const countries = this.state.countries.map(country => {
       if(country.Slug){
-        return <option value={country.Slug}>{country.Country}</option>
+        return <option key={country.Slug} value={country.Slug}>{country.Country}</option>
       }
+      return <div>error :(</div>
     })
 
     return (
       <div>
-        <h1>COVID-19 Dashboard</h1>
-        <select value={this.state.optionsState} onChange={this.changeCountry}>
+        <h1 className='text-center'>COVID-19 Dashboard</h1>
+        <select className='text-center' value={this.state.optionsState} onChange={this.changeCountry}>
           {countries}
         </select>
         <CountryChart country={this.state.optionsState} />

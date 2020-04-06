@@ -9,22 +9,41 @@ class CountryChart extends React.Component {
         this.state = {
             country: props.country,
             data: [],
+            countryString: '',
             totalConfirmed: 0
         }
         this.getData = this.getData.bind(this);
+        this.formatNumber = this.formatNumber.bind(this)
     }
 
     getData(country){
-        //https://api.covid19api.com/live/country/spain/status/confirmed
         const url = `https://api.covid19api.com/total/country/${country}/status/confirmed`
     
         axios.get(url)
         .then(resp => {
-            this.setState({
-                data: resp.data,
-                totalConfirmed: resp.data[resp.data.length-1].Cases
-            })
+            if(resp.data[resp.data.length-1]){
+                var num = this.formatNumber(resp.data[resp.data.length-1].Cases)
+                this.setState({
+                    data: resp.data,
+                    countryString:  resp.data[resp.data.length-1].Country,
+                    totalConfirmed: num
+                })
+            }
+            else{
+                this.setState({
+                    data: [],
+                    countryString:  this.props.country,
+                    totalConfirmed: 0
+                })
+            }
         })
+    }
+
+    formatNumber(num){
+        if(num > 999){
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        else { return num }
     }
 
     componentDidMount() {
@@ -40,9 +59,9 @@ class CountryChart extends React.Component {
     render(){
         return(
             <div>
-                <h2>{this.props.country} Confirmed Cases</h2>
-                <p>Total Confirmed Cases: {this.state.totalConfirmed}</p>
-                <DataPoint points={this.state.data}/>
+                <p>Total Confirmed Cases: <span className='font-bold'>{this.state.totalConfirmed}</span></p>
+                <h2>Confirmed Cases in {this.state.countryString}</h2>
+                <DataPoint points={this.state.data} />
             </div>
         )
     }
